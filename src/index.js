@@ -9,7 +9,7 @@ app.use('/', (req, res, next) => {
 
 const PORT = process.env.PORT || 3000;
 
-app.listen(3000, (err) => {
+app.listen(PORT, (err) => {
   if (!err) {
     console.log('Server started:');
     console.log(chalk.blue(`http://127.0.0.1:${PORT}`));
