@@ -57,6 +57,30 @@ app.post('/tasks', (req, res, next) => {
     });
 });
 
+app.get('/tasks', (req, res, next) => {
+  Task.find({})
+    .then((tasks) => {
+      res.send(tasks);
+    }).catch((err) => {
+      res.status(500).send(err);
+    });
+});
+
+app.get('/tasks/:id', (req, res, next) => {
+  const _id = req.params.id;
+
+  Task.findById(_id)
+    .then((task) => {
+      if (task) {
+        res.send(task);
+      } else {
+        res.status(404).send();
+      }
+    }).catch((err) => {
+
+    });
+});
+
 app.use('/', (req, res, next) => {
   res.send('<h1>It\'s alive!</h1>')
 });
