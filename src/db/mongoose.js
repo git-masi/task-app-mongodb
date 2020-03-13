@@ -10,5 +10,6 @@ const connectionURL = `mongodb+srv://${process.env.DB_USERNAME}:${process.env.DB
 mongoose.connect(connectionURL, {
   useNewUrlParser: true,
   useCreateIndex: true,
-  useUnifiedTopology: true
+  useUnifiedTopology: true,
+  useFindAndModify: false
 });
