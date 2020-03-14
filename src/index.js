@@ -43,6 +43,29 @@ app.get('/users/:id', async (req, res, next) => {
   }
 });
 
+app.patch('/users/:id', async (req, res, next) => {
+  const updates = Object.keys(req.body);
+  const allowedUpdates = ['name', 'age', 'password', 'email'];
+  const isValidUpdate = updates.every(key => allowedUpdates.includes(key));
+  if (!isValidUpdate) return res.status(400).send({ "error": "Request contains a feild that cannot be updated"});
+
+  try {
+    const user = await User.findByIdAndUpdate(req.params.id, req.body, { new: true, runValidators: true });
+
+    if (!user) {
+      res.status(404).send();
+    } else {
+      res.send(user);
+    }
+  } catch (err) {
+    if (err.name === 'ValidationError') {
+      res.status(400).send(err);
+    } else {
+      res.status(500).send(err);
+    }
+  }
+});
+
 app.post('/tasks', async (req, res, next) => {
   const task = new Task(req.body);
 
@@ -74,6 +97,29 @@ app.get('/tasks/:id', async (req, res, next) => {
     }
   } catch (err) {
     res.status(500).send(err);
+  }
+});
+
+app.patch('/tasks/:id', async (req, res, next) => {
+  const updates = Object.keys(req.body);
+  const allowedUpdates = ['description', 'completed'];
+  const isValidUpdate = updates.every(key => allowedUpdates.includes(key));
+
+  if (!isValidUpdate) return res.status(400).send({ "error": "Request body contains a field that cannot be updated" });
+
+  try {
+    const task = await Task.findByIdAndUpdate(req.params.id, req.body, { new: true, runValidators: true });
+    if (!task) {
+      res.status(404).send();
+    } else {
+      res.send(task);
+    }
+  } catch (err) {
+    if (err.name === 'ValidationError') {
+      res.status(400).send(err);
+    } else {
+      res.status(500).send(err);
+    }
   }
 });
 
