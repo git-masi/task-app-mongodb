@@ -15,7 +15,7 @@ app.use(userRouter);
 app.use(taskRouter);
 
 app.use('/', (req, res, next) => {
-  res.send('<h1>It\'s alive!</h1>')
+  res.status(404).send();
 });
 
 app.listen(port, () => {
