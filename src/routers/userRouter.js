@@ -40,14 +40,18 @@ router.patch('/users/:id', async (req, res, next) => {
   const updates = Object.keys(req.body);
   const allowedUpdates = ['name', 'age', 'password', 'email'];
   const isValidUpdate = updates.every(key => allowedUpdates.includes(key));
+
   if (!isValidUpdate) return res.status(400).send({ "error": "Request contains a feild that cannot be updated" });
 
   try {
-    const user = await User.findByIdAndUpdate(req.params.id, req.body, { new: true, runValidators: true });
+    // const user = await User.findByIdAndUpdate(req.params.id, req.body, { new: true, runValidators: true });
+    const user = await User.findById(req.params.id);
 
     if (!user) {
       res.status(404).send();
     } else {
+      updates.forEach(update => user[update] = req.body[update]);
+      await user.save();
       res.send(user);
     }
   } catch (err) {
