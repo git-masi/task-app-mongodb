@@ -14,10 +14,29 @@ router.post('/users/login', async (req, res, next) => {
   }
 });
 
+router.post('/users/logout', auth, async (req, res, next) => {
+  try {
+    req.user.tokens = req.user.tokens.filter(t => t.token !== req.token);
+    await req.user.save();
+    res.send();
+  } catch (err) {
+    res.status(500).send();
+  }
+});
+
+router.post('/users/logoutAll', auth, async (req, res, next) => {
+  try {
+    req.user.tokens = [];
+    await req.user.save();
+    res.send();
+  } catch (err) {
+    res.status(500).send();
+  }
+});
+
 router.post('/users', async (req, res, next) => {
   try {
     const user = new User(req.body);
-    // await user.save();
     const token = await user.generateAuthToken();
     res.status(201).send({ user, token });
   } catch (err) {
@@ -26,9 +45,12 @@ router.post('/users', async (req, res, next) => {
 });
 
 router.get('/users/me', auth, async (req, res, next) => {
-  const { name, age, email } = req.user;
-  const user = { name, age, email };
-  res.send(user);
+  // const { name, age, email } = req.user;
+  // const user = { name, age, email };
+  // res.send(user);
+
+  // use this for developement only
+  res.send(req.user);
 });
 
 router.get('/users/:id', async (req, res, next) => {
