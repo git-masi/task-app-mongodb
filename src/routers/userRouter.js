@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
 
-const User = require('../models/user');
+const User = require('../models/User');
 const auth = require('../middleware/auth');
 
 router.post('/users/login', async (req, res, next) => {
@@ -53,7 +53,6 @@ router.patch('/users/:id', async (req, res, next) => {
   if (!isValidUpdate) return res.status(400).send({ "error": "Request contains a feild that cannot be updated" });
 
   try {
-    // const user = await User.findByIdAndUpdate(req.params.id, req.body, { new: true, runValidators: true });
     const user = await User.findById(req.params.id);
 
     if (!user) {
