@@ -23,18 +23,31 @@ router.post('/tasks', auth, async (req, res, next) => {
 // Example routes
   // GET /tasks?completed=true
   // GET /tasks?limit=10&skip=20
+  // GET /tasks?sortBy=createdAt:desc
 router.get('/tasks', auth, async (req, res, next) => {
   try {
     const match = {};
     const options = {};
+    // sort is an object that is added to options
+    const sort = {};
 
     if (req.query.completed) {
-      match.completed = req.query.completed === 'true' ? true : false;
+      match.completed = req.query.completed === 'true';
     }
 
     if (req.query.limit) {
       options.limit = parseInt(req.query.limit);
       options.skip = parseInt(req.query.skip);
+    }
+
+    if (req.query.sortBy) {
+      const sortBy = req.query.sortBy.split(':');
+      const sortField = sortBy[0];
+      const sortOrder = sortBy[1];
+
+      sort[sortField] = sortOrder === 'desc' ? -1 : 1;
+
+      options.sort = sort;
     }
 
     await req.user.populate({
