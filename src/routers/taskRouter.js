@@ -20,18 +20,27 @@ router.post('/tasks', auth, async (req, res, next) => {
 });
 
 // Read all tasks
-// GET /tasks?completed=true
+// Example routes
+  // GET /tasks?completed=true
+  // GET /tasks?limit=10&skip=20
 router.get('/tasks', auth, async (req, res, next) => {
   try {
     const match = {};
+    const options = {};
 
     if (req.query.completed) {
       match.completed = req.query.completed === 'true' ? true : false;
     }
 
+    if (req.query.limit) {
+      options.limit = parseInt(req.query.limit);
+      options.skip = parseInt(req.query.skip);
+    }
+
     await req.user.populate({
       'path': 'tasks',
-      match
+      match,
+      options
     }).execPopulate();
 
     res.send(req.user.tasks);
