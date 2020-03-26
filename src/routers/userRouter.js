@@ -4,6 +4,7 @@ const router = express.Router();
 const User = require('../models/User');
 const auth = require('../middleware/auth');
 
+// Login user => handle credentials, create JWT for authentication
 router.post('/users/login', async (req, res, next) => {
   try {
     const user = await User.findByCredentials(req.body.email, req.body.password);
@@ -14,6 +15,7 @@ router.post('/users/login', async (req, res, next) => {
   }
 });
 
+// Logout user => remove one JWT
 router.post('/users/logout', auth, async (req, res, next) => {
   try {
     req.user.tokens = req.user.tokens.filter(t => t.token !== req.token);
@@ -24,6 +26,7 @@ router.post('/users/logout', auth, async (req, res, next) => {
   }
 });
 
+// Logout user => remove all JWT
 router.post('/users/logoutAll', auth, async (req, res, next) => {
   try {
     req.user.tokens = [];
@@ -34,6 +37,7 @@ router.post('/users/logoutAll', auth, async (req, res, next) => {
   }
 });
 
+// Create new user
 router.post('/users', async (req, res, next) => {
   try {
     const user = new User(req.body);
@@ -65,6 +69,7 @@ router.get('/users/me', auth, async (req, res, next) => {
 //   }
 // });
 
+// Update user
 router.patch('/users/me', auth, async (req, res, next) => {
   const updates = Object.keys(req.body);
   const allowedUpdates = ['name', 'age', 'password', 'email'];
@@ -85,6 +90,7 @@ router.patch('/users/me', auth, async (req, res, next) => {
   }
 });
 
+// Delete user (User schema handles deleting associated tasks)
 router.delete('/users/me', auth, async (req, res, next) => {
   try {
     await req.user.remove();

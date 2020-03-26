@@ -4,6 +4,7 @@ const auth = require('../middleware/auth');
 
 const Task = require('../models/Task');
 
+// Create new task
 router.post('/tasks', auth, async (req, res, next) => {
   const task = new Task({
     ...req.body,
@@ -18,6 +19,7 @@ router.post('/tasks', auth, async (req, res, next) => {
   }
 });
 
+// Read all tasks
 router.get('/tasks', auth, async (req, res, next) => {
   try {
     await req.user.populate('tasks').execPopulate();
@@ -31,6 +33,7 @@ router.get('/tasks', auth, async (req, res, next) => {
   }
 })
 
+// Read one task
 router.get('/tasks/:id', auth, async (req, res, next) => {
   try {
     const task = await Task.findOne({ _id: req.params.id, owner: req.user._id });
@@ -44,6 +47,7 @@ router.get('/tasks/:id', auth, async (req, res, next) => {
   }
 });
 
+// Update one task
 router.patch('/tasks/:id', auth, async (req, res, next) => {
   const updates = Object.keys(req.body);
   const allowedUpdates = ['description', 'completed'];
@@ -70,6 +74,7 @@ router.patch('/tasks/:id', auth, async (req, res, next) => {
   }
 });
 
+// Delete one task
 router.delete('/tasks/:id', auth, async (req, res, next) => {
   try {
     const task = await Task.findOne({ _id: req.params.id, owner: req.user._id });
