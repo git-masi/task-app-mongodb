@@ -39,4 +39,6 @@ Thumbs.db
 # Project Specific #
 ####################
 node_modules
+uploads
+avatar
 .env
