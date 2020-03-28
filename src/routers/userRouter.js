@@ -6,6 +6,7 @@ const sharp = require('sharp');
 
 const User = require('../models/User');
 const auth = require('../middleware/auth');
+const { sendWelcomeEmail, sendCancelEmail } = require('../emails/account');
 
 // Login user => handle credentials, create JWT for authentication
 // router.post('/users/login', async (req, res, next) => {
@@ -45,6 +46,7 @@ router.post('/logoutAll', auth, async (req, res, next) => {
 router.post('', async (req, res, next) => {
   try {
     const user = new User(req.body);
+    sendWelcomeEmail(user.name, user.email);
     const token = await user.generateAuthToken();
     res.status(201).send({ user, token });
   } catch (err) {
@@ -97,6 +99,7 @@ router.patch('/me', auth, async (req, res, next) => {
 // Delete user (User schema handles deleting associated tasks)
 router.delete('/me', auth, async (req, res, next) => {
   try {
+    sendCancelEmail(req.user.name, req.user.email);
     await req.user.remove();
     res.send(req.user);
   } catch (err) {
