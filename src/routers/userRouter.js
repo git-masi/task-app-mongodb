@@ -128,6 +128,8 @@ router.post('/me/avatar', upload.single('avatar'), async (req, res, next) => {
   } catch (err) {
     res.status(500).send(err);
   }
+}, (err, req, res, next) => {
+  res.status(400).send({ "error": err.message });
 });
 
 module.exports = router;
