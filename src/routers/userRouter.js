@@ -105,7 +105,6 @@ router.delete('/me', auth, async (req, res, next) => {
 
 // Upload image as user avatar
 const upload = multer({
-  dest: 'uploads/avatars',
   limits: {
     fileSize: 1000000
   },
@@ -122,8 +121,10 @@ const upload = multer({
   }
 });
 
-router.post('/me/avatar', upload.single('avatar'), async (req, res, next) => {
+router.post('/me/avatar', auth, upload.single('avatar'), async (req, res, next) => {
   try {
+    req.user.avatar = req.file.buffer;
+    await req.user.save();
     res.send();
   } catch (err) {
     res.status(500).send(err);
