@@ -7,7 +7,8 @@ const User = require('../models/User');
 const auth = require('../middleware/auth');
 
 // Login user => handle credentials, create JWT for authentication
-router.post('/users/login', async (req, res, next) => {
+// router.post('/users/login', async (req, res, next) => {
+router.post('/login', async (req, res, next) => {
   try {
     const user = await User.findByCredentials(req.body.email, req.body.password);
     const token = await user.generateAuthToken();
@@ -18,7 +19,7 @@ router.post('/users/login', async (req, res, next) => {
 });
 
 // Logout user => remove one JWT
-router.post('/users/logout', auth, async (req, res, next) => {
+router.post('/logout', auth, async (req, res, next) => {
   try {
     req.user.tokens = req.user.tokens.filter(t => t.token !== req.token);
     await req.user.save();
@@ -29,7 +30,7 @@ router.post('/users/logout', auth, async (req, res, next) => {
 });
 
 // Logout user => remove all JWT
-router.post('/users/logoutAll', auth, async (req, res, next) => {
+router.post('/logoutAll', auth, async (req, res, next) => {
   try {
     req.user.tokens = [];
     await req.user.save();
@@ -40,7 +41,7 @@ router.post('/users/logoutAll', auth, async (req, res, next) => {
 });
 
 // Create new user
-router.post('/users', async (req, res, next) => {
+router.post('', async (req, res, next) => {
   try {
     const user = new User(req.body);
     const token = await user.generateAuthToken();
@@ -50,7 +51,7 @@ router.post('/users', async (req, res, next) => {
   }
 });
 
-router.get('/users/me', auth, async (req, res, next) => {
+router.get('/me', auth, async (req, res, next) => {
   res.send(req.user);
 });
 
@@ -72,7 +73,7 @@ router.get('/users/me', auth, async (req, res, next) => {
 // });
 
 // Update user
-router.patch('/users/me', auth, async (req, res, next) => {
+router.patch('/me', auth, async (req, res, next) => {
   const updates = Object.keys(req.body);
   const allowedUpdates = ['name', 'age', 'password', 'email'];
   const isValidUpdate = updates.every(key => allowedUpdates.includes(key));
@@ -93,7 +94,7 @@ router.patch('/users/me', auth, async (req, res, next) => {
 });
 
 // Delete user (User schema handles deleting associated tasks)
-router.delete('/users/me', auth, async (req, res, next) => {
+router.delete('/me', auth, async (req, res, next) => {
   try {
     await req.user.remove();
     res.send(req.user);
@@ -121,7 +122,7 @@ const upload = multer({
   }
 });
 
-router.post('/users/me/avatar', upload.single('avatar'), async (req, res, next) => {
+router.post('/me/avatar', upload.single('avatar'), async (req, res, next) => {
   try {
     res.send();
   } catch (err) {
