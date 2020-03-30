@@ -3,6 +3,7 @@ const router = express.Router();
 
 const multer = require('multer');
 const sharp = require('sharp');
+const cors = require('cors');
 
 const User = require('../models/User');
 const auth = require('../middleware/auth');
@@ -45,8 +46,8 @@ router.post('/logoutAll', auth, async (req, res, next) => {
 // Create new user
 router.post('', async (req, res, next) => {
   try {
-    const user = new User(req.body);
-    sendWelcomeEmail(user.name, user.email);
+    const user = await new User(req.body);
+    if (user.name && user.email) sendWelcomeEmail(user.name, user.email);
     const token = await user.generateAuthToken();
     res.status(201).send({ user, token });
   } catch (err) {
@@ -96,6 +97,8 @@ router.patch('/me', auth, async (req, res, next) => {
   }
 });
 
+// enable preflight request
+router.options('/me', cors());
 // Delete user (User schema handles deleting associated tasks)
 router.delete('/me', auth, async (req, res, next) => {
   try {

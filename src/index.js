@@ -1,5 +1,6 @@
 const express = require('express');
 const chalk = require('chalk');
+const cors = require('cors');
 
 require('./db/mongoose');
 const userRouter = require('./routers/userRouter');
@@ -7,6 +8,8 @@ const taskRouter = require('./routers/taskRouter');
 
 const app = express();
 const port = process.env.PORT || 3000;
+
+app.use(cors());
 
 app.use((req, res, next) => require('./middleware/maintenanceMode')(req, res, next, false));
 
