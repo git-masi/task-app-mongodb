@@ -47,7 +47,11 @@ router.post('/logoutAll', auth, async (req, res, next) => {
 router.post('', async (req, res, next) => {
   try {
     const user = await new User(req.body);
-    if (user.name && user.email) sendWelcomeEmail(user.name, user.email);
+    if (user.email.search(/\@(fake|fakemail)\.com$/)) {
+      console.log('Did not send welcome email');
+    } else {
+      sendWelcomeEmail(user.name, user.email);
+    }
     const token = await user.generateAuthToken();
     res.status(201).send({ user, token });
   } catch (err) {
@@ -99,10 +103,15 @@ router.patch('/me', auth, async (req, res, next) => {
 
 // enable preflight request
 router.options('/me', cors());
+
 // Delete user (User schema handles deleting associated tasks)
 router.delete('/me', auth, async (req, res, next) => {
   try {
-    sendCancelEmail(req.user.name, req.user.email);
+    if (req.user.email.search(/\@(fake|fakemail)\.com$/)) {
+      console.log('Did not send cancel email');
+    } else {
+      sendCancelEmail(req.user.name, req.user.email);
+    }
     await req.user.remove();
     res.send(req.user);
   } catch (err) {
