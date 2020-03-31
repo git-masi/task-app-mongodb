@@ -63,23 +63,6 @@ router.get('/me', auth, async (req, res, next) => {
   res.send(req.user);
 });
 
-// GET => /users/:id will be deleted in "production"
-// Leaving it temporarily for use in development
-//
-// router.get('/users/:id', async (req, res, next) => {
-//   try {
-//     const _id = req.params.id;
-//     const user = await User.findById(_id);
-//     if (user) {
-//       res.send(user);
-//     } else {
-//       res.status(404).send();
-//     }
-//   } catch (err) {
-//     res.status(500).send(err);
-//   }
-// });
-
 // Update user
 router.patch('/me', auth, async (req, res, next) => {
   const updates = Object.keys(req.body);
