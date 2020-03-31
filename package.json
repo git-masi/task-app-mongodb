@@ -9,8 +9,11 @@
   },
   "scripts": {
     "start": "node src/index.js",
-    "dev": "nodemon src/index.js",
-    "test": "jest"
+    "dev": "nodemon -r dotenv/config src/index.js",
+    "test": "jest --watch"
+  },
+  "jest": {
+    "testEnvironment": "node"
   },
   "keywords": [],
   "author": "Eric Masi",
