@@ -12,7 +12,7 @@ const userOne = {
   "_id": userOneId,
   "name": "Bob",
   "age": 25,
-  "email": "mike@fakeemail.com",
+  "email": "bob@example.com",
   "password": "superSafe",
   "tokens": [{
     "token": jwt.sign({ _id: userOneId }, process.env.PRIVATE_KEY)
@@ -31,7 +31,7 @@ test('Should create new user', async () => {
   const response = await request(app).post('/users').send({
     "name": "New User From Test",
     "age": 26,
-    "email": "fake1@fakemail.com",
+    "email": "newUser@example.com",
     "password": "superSafe"
   }).expect(201);
 
