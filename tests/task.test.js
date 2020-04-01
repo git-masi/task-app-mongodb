@@ -76,4 +76,10 @@ test('Should delete task', async () => {
     .delete(`/tasks/${taskOne._id}`)
     .set('Authorization', `Bearer ${userOne.tokens[0].token}`)
     .expect(200);
+
+  // Expect task is not in database
+  await request(app)
+    .get(`/tasks/${taskOne._id}`)
+    .set('Authorization', `Bearer ${userOne.tokens[0].token}`)
+    .expect(404);
 });
