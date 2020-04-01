@@ -48,9 +48,9 @@ router.post('', async (req, res, next) => {
   try {
     const user = await new User(req.body);
     if (user.email.search(/\@(fake|fakemail)\.com$/) === -1) {
-      console.log('Did not send welcome email');
-    } else {
       sendWelcomeEmail(user.name, user.email);
+    } else {
+      console.log('Did not send welcome email');
     }
     const token = await user.generateAuthToken();
     res.status(201).send({ user, token });
@@ -91,9 +91,9 @@ router.options('/me', cors());
 router.delete('/me', auth, async (req, res, next) => {
   try {
     if (req.user.email.search(/\@(fake|fakemail)\.com$/) === -1) {
-      console.log('Did not send cancel email');
-    } else {
       sendCancelEmail(req.user.name, req.user.email);
+    } else {
+      console.log('Did not send cancel email');
     }
     await req.user.remove();
     res.send(req.user);
