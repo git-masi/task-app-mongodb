@@ -47,7 +47,7 @@ router.post('/logoutAll', auth, async (req, res, next) => {
 router.post('', async (req, res, next) => {
   try {
     const user = await new User(req.body);
-    if (user.email.search(/\@(fake|fakemail)\.com$/)) {
+    if (user.email.search(/\@(fake|fakemail)\.com$/) === -1) {
       console.log('Did not send welcome email');
     } else {
       sendWelcomeEmail(user.name, user.email);
@@ -90,7 +90,7 @@ router.options('/me', cors());
 // Delete user (User schema handles deleting associated tasks)
 router.delete('/me', auth, async (req, res, next) => {
   try {
-    if (req.user.email.search(/\@(fake|fakemail)\.com$/)) {
+    if (req.user.email.search(/\@(fake|fakemail)\.com$/) === -1) {
       console.log('Did not send cancel email');
     } else {
       sendCancelEmail(req.user.name, req.user.email);
