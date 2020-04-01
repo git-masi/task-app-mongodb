@@ -42,5 +42,7 @@ node_modules
 uploads
 avatar
 config
-fixtures
+*.pgn
+*.jpg
+*.jpeg
 .env
