@@ -1,7 +1,9 @@
 const express = require('express');
-const router = express.Router();
-const auth = require('../middleware/auth');
+const cors = require('cors');
 
+const router = express.Router();
+
+const auth = require('../middleware/auth');
 const Task = require('../models/Task');
 
 // Create new task
@@ -102,6 +104,9 @@ router.patch('/:id', auth, async (req, res, next) => {
     }
   }
 });
+
+// enable preflight request
+router.options('/:id', cors());
 
 // Delete one task
 router.delete('/:id', auth, async (req, res, next) => {
