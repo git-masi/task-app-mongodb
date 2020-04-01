@@ -28,21 +28,39 @@ beforeEach(async () => {
 
 // Create user
 test('Should create new user', async () => {
-  await request(app).post('/users').send({
+  const response = await request(app).post('/users').send({
     "name": "New User From Test",
     "age": 26,
-    "email": "fake1@email.com",
+    "email": "fake1@fakemail.com",
     "password": "superSafe"
   }).expect(201);
+
+  const user = await User.findById(response.body.user._id);
+  // Expect user is in database
+  expect(user).not.toBeNull();
+
+  // Expect user in database has certain properties
+  expect(response.body).toMatchObject({
+    user: {
+      name: 'New User From Test',
+      age: 26
+    },
+    token: user.tokens[0].token
+  })
 });
 
 
 // Login user
 test('Should login user', async () => {
-  await request(app).post('/users/login').send({
+  const response = await request(app).post('/users/login').send({
     "email": userOne.email,
     "password": userOne.password
   }).expect(200);
+
+  const user = await User.findById(response.body.user._id);
+
+  // Expect token in response to match user's 2nd token in database
+  expect(response.body.token).toBe(user.tokens[1].token);
 });
 
 
@@ -110,9 +128,14 @@ test('Should not delete unauthenticated user', async () => {
 
 // Delete user profile
 test('Should delete user profile', async () => {
-  await request(app)
+  const response = await request(app)
     .delete('/users/me')
     .set('Authorization', `Bearer ${userOne.tokens[0].token}`)
     .send()
     .expect(200);
+
+  const user = await User.findById(response.body._id);
+
+  // Expect the user is not longer in database
+  expect(user).toBeNull();
 });
