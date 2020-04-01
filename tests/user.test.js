@@ -105,6 +105,18 @@ test('Should not update profile for unauthenticated user', async () => {
 });
 
 
+// Do not update user profile
+test('Should not update profile with invalid fields', async () => {
+  await request(app)
+    .patch('/users/me')
+    .set('Authorization', userOne.tokens[0].token)
+    .send({
+      "_id": new mongoose.Types.ObjectId()
+    })
+    .expect(400);
+});
+
+
 // Update user profile
 test('Should update user profile', async () => {
   await request(app)
@@ -114,6 +126,10 @@ test('Should update user profile', async () => {
       "name": "Robert"
     })
     .expect(200)
+
+  const user = await User.findById(userOneId);
+
+  expect(user.name).toBe('Robert');
 });
 
 // Do not delete user profile
@@ -138,4 +154,17 @@ test('Should delete user profile', async () => {
 
   // Expect the user is not longer in database
   expect(user).toBeNull();
+});
+
+// Upload avatar image
+test('Should upload avatar image to user profile', async () => {
+  await request(app)
+    .post('/users/me/avatar')
+    .set('Authorization', `Bearer ${userOne.tokens[0].token}`)
+    .attach('avatar', 'tests/fixtures/japan-stop-bike-road-sign-width-800.jpg')
+    .expect(200)
+
+  const user = await User.findById(userOneId);
+
+  expect(user.avatar).toEqual(expect.any(Buffer));
 });
